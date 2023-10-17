@@ -5,10 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/md_theme_light_primary"
-    tools:context=".views.LoginActivity">
+    tools:context=".views.RegisterActivity">
 
     <ImageView
-        android:id="@+id/loginIcon"
+        android:id="@+id/registerIcon"
         android:layout_width="0dp"
         android:layout_height="240dp"
         android:layout_marginTop="24dp"
@@ -25,17 +25,17 @@
         android:paddingVertical="24dp"
         android:background="@drawable/bg_form_login"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/loginIcon"
+        app:layout_constraintTop_toBottomOf="@+id/registerIcon"
         tools:layout_editor_absoluteX="1dp" >
 
         <TextView
-            android:id="@+id/welcomeTitle"
+            android:id="@+id/registerTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:fontFamily="sans-serif"
             android:maxLines="1"
-            android:text="@string/welcome_back"
+            android:text="@string/register_title"
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.Material3.DisplaySmall"
             android:textStyle="bold"
@@ -44,32 +44,32 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/welcomeSubTitle"
+            android:id="@+id/registerSubTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:fontFamily="sans-serif"
-            android:text="@string/login_desc"
+            android:text="@string/register_desc"
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
-            app:layout_constraintEnd_toEndOf="@+id/welcomeTitle"
-            app:layout_constraintStart_toStartOf="@+id/welcomeTitle"
-            app:layout_constraintTop_toBottomOf="@+id/welcomeTitle" />
+            app:layout_constraintEnd_toEndOf="@+id/registerTitle"
+            app:layout_constraintStart_toStartOf="@+id/registerTitle"
+            app:layout_constraintTop_toBottomOf="@+id/registerTitle" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/emailEditTextLayout"
             style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="48dp"
+            android:layout_marginTop="24dp"
             android:hint="@string/email"
+            app:startIconDrawable="@drawable/ic_email"
             app:endIconMode="clear_text"
             app:errorEnabled="true"
             app:placeholderText="email@email.com"
-            app:startIconDrawable="@drawable/ic_email"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/welcomeSubTitle">
+            app:layout_constraintTop_toBottomOf="@+id/registerSubTitle">
 
             <com.dicoding.storyapp.customview.EmailEditText
                 android:id="@+id/emailEditText"
@@ -81,18 +81,42 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/nameEditTextLayout"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="@string/name"
+            app:startIconDrawable="@drawable/ic_name"
+            app:endIconMode="clear_text"
+            app:errorEnabled="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/emailEditTextLayout"
+            app:placeholderText="taufik">
+
+            <EditText
+                android:id="@+id/nameEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="textPersonName"
+                tools:ignore="LabelFor,SpeakableTextPresentCheck"
+                android:importantForAutofill="no" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/passwordEditTextLayout"
             style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:hint="@string/password"
+            app:startIconDrawable="@drawable/ic_password"
             app:endIconMode="password_toggle"
             app:errorEnabled="true"
-            app:placeholderText="********"
-            app:startIconDrawable="@drawable/ic_password"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/emailEditTextLayout">
+            app:layout_constraintTop_toBottomOf="@+id/nameEditTextLayout"
+            app:placeholderText="********">
 
             <com.dicoding.storyapp.customview.PasswordEditText
                 android:id="@+id/passwordEditText"
@@ -106,7 +130,7 @@
             android:id="@+id/btnLogin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/log_in"
+            android:text="@string/sign_up"
             android:enabled="false"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -117,7 +141,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:text="@string/dont_have_account"
+            android:text="@string/have_an_account"
             android:textAlignment="center"
             app:layout_constraintBottom_toTopOf="@+id/btnLogin"
             app:layout_constraintEnd_toEndOf="@+id/btnLogin"

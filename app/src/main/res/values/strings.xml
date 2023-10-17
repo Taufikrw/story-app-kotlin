@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">StoryApp</string>
+    <string name="welcome_back">Welcome Back!</string>
+    <string name="login_desc">Let\'s Sign you in</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="log_in">Log In</string>
+    <string name="dont_have_account">Don\'t have account? Register</string>
+    <string name="register_title">Get Started!</string>
+    <string name="register_desc">Create new account</string>
+    <string name="name">Name</string>
+    <string name="have_an_account">Have an account? Login</string>
+    <string name="sign_up">Sign Up</string>
 </resources>
