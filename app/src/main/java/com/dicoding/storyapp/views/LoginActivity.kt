@@ -5,10 +5,10 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import com.dicoding.storyapp.R
 import com.dicoding.storyapp.customview.EmailEditText
 import com.dicoding.storyapp.customview.PasswordEditText
 import com.dicoding.storyapp.databinding.ActivityLoginBinding
+import com.dicoding.storyapp.views.register.RegisterActivity
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
@@ -77,5 +77,9 @@ class LoginActivity : AppCompatActivity() {
 
     private fun enableButton() {
         binding.btnLogin.isEnabled = correctEmail && correctPassword
+    }
+
+    companion object {
+        const val EXTRA_MESSAGE = "extra_message"
     }
 }
