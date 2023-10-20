@@ -11,4 +11,6 @@
     <string name="name">Name</string>
     <string name="have_an_account">Have an account? Login</string>
     <string name="sign_up">Sign Up</string>
+    <string name="success">Success</string>
+    <string name="login_success_desc">Selamat Datang!</string>
 </resources>

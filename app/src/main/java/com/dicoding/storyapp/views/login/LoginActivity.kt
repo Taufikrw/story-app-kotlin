@@ -1,13 +1,24 @@
-package com.dicoding.storyapp.views
+package com.dicoding.storyapp.views.login
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.View
+import android.widget.Toast
+import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
+import androidx.datastore.dataStore
+import androidx.lifecycle.ViewModelProvider
+import com.dicoding.storyapp.MainActivity
+import com.dicoding.storyapp.R
 import com.dicoding.storyapp.customview.EmailEditText
 import com.dicoding.storyapp.customview.PasswordEditText
+import com.dicoding.storyapp.data.UserPreferences
+import com.dicoding.storyapp.data.dataStore
 import com.dicoding.storyapp.databinding.ActivityLoginBinding
+import com.dicoding.storyapp.views.ViewModelFactory
 import com.dicoding.storyapp.views.register.RegisterActivity
 
 class LoginActivity : AppCompatActivity() {
@@ -18,11 +29,15 @@ class LoginActivity : AppCompatActivity() {
     private var correctPassword = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val pref = UserPreferences.getInstance(application.dataStore)
+        val viewModel = ViewModelProvider(this, ViewModelFactory(pref))[LoginViewModel::class.java]
+
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         supportActionBar?.hide()
+
         emailEditText = binding.emailEditText
         passwordEditText = binding.passwordEditText
 
@@ -72,6 +87,48 @@ class LoginActivity : AppCompatActivity() {
         binding.tvAccount.setOnClickListener {
             startActivity(Intent(this, RegisterActivity::class.java))
             finish()
+        }
+
+        viewModel.isLoading.observe(this) {
+            binding.progressBar.visibility = if (it) View.VISIBLE else View.GONE
+        }
+
+        binding.btnLogin.setOnClickListener {
+            viewModel.login(
+                emailEditText.text.toString(),
+                passwordEditText.text.toString()
+            )
+        }
+
+        viewModel.isErrorResponse.observe(this) {
+            viewModel.loginMessage.observe(this) { message ->
+                if (it) {
+                    Toast.makeText(this@LoginActivity, message, Toast.LENGTH_SHORT).show()
+                } else {
+                    viewModel.loginResult.observe(this) { result ->
+                        viewModel.saveToken("Bearer " + result.token)
+                        AlertDialog.Builder(this).apply {
+                            setTitle(R.string.success)
+                            setMessage(R.string.login_success_desc)
+                            setPositiveButton("Lanjut") { _, _ ->
+                                val loginIntent = Intent(this@LoginActivity, MainActivity::class.java)
+                                loginIntent.putExtra(MainActivity.USER_TOKEN,"Bearer " + result.token)
+                                startActivity(loginIntent)
+                                finish()
+                            }
+                            create()
+                            show()
+                        }
+                    }
+                }
+            }
+        }
+
+        // TODO DataStore Sementara
+        viewModel.getToken().observe(this) {
+            if (it.isNotEmpty()) {
+                startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+            }
         }
     }
 

@@ -5,18 +5,16 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
+import com.dicoding.storyapp.R
 import com.dicoding.storyapp.customview.EmailEditText
 import com.dicoding.storyapp.customview.PasswordEditText
-import com.dicoding.storyapp.data.remote.response.ErrorResponse
 import com.dicoding.storyapp.databinding.ActivityRegisterBinding
-import com.dicoding.storyapp.views.LoginActivity
-import com.google.gson.Gson
-import retrofit2.HttpException
+import com.dicoding.storyapp.views.login.LoginActivity
 
 class RegisterActivity : AppCompatActivity() {
     private val viewModel by viewModels<RegisterViewModel>()
@@ -101,9 +99,9 @@ class RegisterActivity : AppCompatActivity() {
             finish()
         }
 
-//        viewModel.isLoading.observe(this) {
-//            binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
-//        }
+        viewModel.isLoading.observe(this) {
+            binding.progressBar.visibility = if (it) View.VISIBLE else View.GONE
+        }
 
         binding.btnSignUp.setOnClickListener {
             viewModel.postRegister(
@@ -116,12 +114,19 @@ class RegisterActivity : AppCompatActivity() {
         viewModel.isErrorResponse.observe(this) {
             viewModel.registerMessage.observe(this) { message ->
                 if (it) {
-                    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@RegisterActivity, message, Toast.LENGTH_SHORT).show()
                 } else {
-                    val loginIntent = Intent(this@RegisterActivity, LoginActivity::class.java)
-                    loginIntent.putExtra(LoginActivity.EXTRA_MESSAGE, message)
-                    startActivity(loginIntent)
-                    finish()
+                    AlertDialog.Builder(this).apply {
+                        setTitle(R.string.success)
+                        setMessage(message)
+                        setPositiveButton("Lanjut") { _, _ ->
+                            val loginIntent = Intent(this@RegisterActivity, LoginActivity::class.java)
+                            startActivity(loginIntent)
+                            finish()
+                        }
+                        create()
+                        show()
+                    }
                 }
             }
         }
