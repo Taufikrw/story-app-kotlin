@@ -7,11 +7,9 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.widget.Toast
-import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
-import androidx.datastore.dataStore
 import androidx.lifecycle.ViewModelProvider
-import com.dicoding.storyapp.MainActivity
+import com.dicoding.storyapp.views.MainActivity
 import com.dicoding.storyapp.R
 import com.dicoding.storyapp.customview.EmailEditText
 import com.dicoding.storyapp.customview.PasswordEditText
@@ -86,7 +84,6 @@ class LoginActivity : AppCompatActivity() {
 
         binding.tvAccount.setOnClickListener {
             startActivity(Intent(this, RegisterActivity::class.java))
-            finish()
         }
 
         viewModel.isLoading.observe(this) {
@@ -127,7 +124,11 @@ class LoginActivity : AppCompatActivity() {
         // TODO DataStore Sementara
         viewModel.getToken().observe(this) {
             if (it.isNotEmpty()) {
-                startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+                startActivity(
+                    Intent(this@LoginActivity, MainActivity::class.java)
+                        .putExtra(MainActivity.USER_TOKEN, it)
+                )
+                finish()
             }
         }
     }

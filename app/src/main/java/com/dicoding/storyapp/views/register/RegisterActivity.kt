@@ -96,7 +96,6 @@ class RegisterActivity : AppCompatActivity() {
 
         binding.tvAccount.setOnClickListener {
             startActivity(Intent(this, LoginActivity::class.java))
-            finish()
         }
 
         viewModel.isLoading.observe(this) {
