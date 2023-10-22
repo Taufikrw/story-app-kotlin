@@ -3,6 +3,7 @@ package com.dicoding.storyapp.views.detail
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.bumptech.glide.Glide
 import com.dicoding.storyapp.R
 import com.dicoding.storyapp.data.remote.response.ListStoryItem
 import com.dicoding.storyapp.databinding.ActivityDetailBinding
@@ -21,7 +22,12 @@ class DetailActivity : AppCompatActivity() {
             @Suppress("DEPRECATION")
             intent.getParcelableExtra(STORY_DATA)
         }
-        binding.textView.text = story?.name
+        binding.tvName.text = story?.name
+        binding.tvCreate.text = story?.createdAt
+        binding.tvDesc.text = story?.description
+        Glide.with(this)
+            .load(story?.photoUrl)
+            .into(binding.ivPhotoUrl)
     }
 
     companion object {

@@ -7,6 +7,10 @@
     android:background="@color/md_theme_light_primary"
     tools:context=".views.login.LoginActivity">
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
     <ImageView
         android:id="@+id/loginIcon"
         android:layout_width="0dp"

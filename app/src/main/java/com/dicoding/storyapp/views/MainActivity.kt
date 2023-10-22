@@ -1,5 +1,6 @@
 package com.dicoding.storyapp.views
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -7,6 +8,7 @@ import androidx.activity.viewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dicoding.storyapp.databinding.ActivityMainBinding
+import com.dicoding.storyapp.views.addStory.AddStoryActivity
 import com.dicoding.storyapp.views.listStory.StoryViewModel
 
 class MainActivity : AppCompatActivity() {
@@ -31,6 +33,10 @@ class MainActivity : AppCompatActivity() {
             val adapter = StoryAdapter()
             adapter.submitList(it)
             binding.rvStory.adapter = adapter
+        }
+
+        binding.fabAddStory.setOnClickListener {
+            startActivity(Intent(this, AddStoryActivity::class.java))
         }
     }
 
