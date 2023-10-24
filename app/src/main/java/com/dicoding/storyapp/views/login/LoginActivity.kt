@@ -1,5 +1,7 @@
 package com.dicoding.storyapp.views.login
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -36,6 +38,7 @@ class LoginActivity : AppCompatActivity() {
 
         supportActionBar?.hide()
 
+        playAnimation()
         emailEditText = binding.emailEditText
         passwordEditText = binding.passwordEditText
 
@@ -103,13 +106,12 @@ class LoginActivity : AppCompatActivity() {
                     Toast.makeText(this@LoginActivity, message, Toast.LENGTH_SHORT).show()
                 } else {
                     viewModel.loginResult.observe(this) { result ->
-                        viewModel.saveToken("Bearer " + result.token)
                         AlertDialog.Builder(this).apply {
                             setTitle(R.string.success)
                             setMessage(R.string.login_success_desc)
                             setPositiveButton("Lanjut") { _, _ ->
+                                viewModel.saveToken("Bearer " + result.token)
                                 val loginIntent = Intent(this@LoginActivity, MainActivity::class.java)
-                                loginIntent.putExtra(MainActivity.USER_TOKEN,"Bearer " + result.token)
                                 startActivity(loginIntent)
                                 finish()
                             }
@@ -126,10 +128,36 @@ class LoginActivity : AppCompatActivity() {
             if (it.isNotEmpty()) {
                 startActivity(
                     Intent(this@LoginActivity, MainActivity::class.java)
-                        .putExtra(MainActivity.USER_TOKEN, it)
                 )
                 finish()
             }
+        }
+    }
+
+    private fun playAnimation() {
+        ObjectAnimator.ofFloat(binding.loginIcon, View.TRANSLATION_X, -30f, 30f).apply {
+            duration = 6000
+            repeatCount = ObjectAnimator.INFINITE
+            repeatMode = ObjectAnimator.REVERSE
+        }.start()
+
+        val title = ObjectAnimator.ofFloat(binding.welcomeTitle, View.ALPHA, 1f).setDuration(500)
+        val subtitle = ObjectAnimator.ofFloat(binding.welcomeSubTitle, View.ALPHA, 1f).setDuration(500)
+        val email = ObjectAnimator.ofFloat(binding.emailEditTextLayout, View.ALPHA, 1f).setDuration(500)
+        val password = ObjectAnimator.ofFloat(binding.passwordEditTextLayout, View.ALPHA, 1f).setDuration(500)
+        val account = ObjectAnimator.ofFloat(binding.tvAccount, View.ALPHA, 1f).setDuration(500)
+        val login = ObjectAnimator.ofFloat(binding.btnLogin, View.ALPHA, 1f).setDuration(500)
+
+        AnimatorSet().apply {
+            playSequentially(
+                title,
+                subtitle,
+                email,
+                password,
+                account,
+                login
+            )
+            start()
         }
     }
 

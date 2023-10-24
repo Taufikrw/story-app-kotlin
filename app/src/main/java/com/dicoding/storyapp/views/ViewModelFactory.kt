@@ -3,6 +3,7 @@ package com.dicoding.storyapp.views
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.dicoding.storyapp.data.UserPreferences
+import com.dicoding.storyapp.views.listStory.StoryViewModel
 import com.dicoding.storyapp.views.login.LoginViewModel
 
 class ViewModelFactory(private val pref: UserPreferences) : ViewModelProvider.NewInstanceFactory() {

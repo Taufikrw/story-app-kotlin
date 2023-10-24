@@ -54,7 +54,7 @@ class LoginViewModel(private val pref: UserPreferences): ViewModel() {
 
             override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
                 _isLoading.value = false
-                Log.e(LoginViewModel.TAG, "onFailure: ${t.message.toString()}")
+                Log.e(TAG, "onFailure: ${t.message.toString()}")
             }
 
         })
@@ -67,6 +67,12 @@ class LoginViewModel(private val pref: UserPreferences): ViewModel() {
     fun saveToken(token: String) {
         viewModelScope.launch {
             pref.saveToken(token)
+        }
+    }
+
+    fun destroyToken() {
+        viewModelScope.launch {
+            pref.destroyToken()
         }
     }
 

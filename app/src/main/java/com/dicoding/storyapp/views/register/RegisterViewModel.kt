@@ -37,13 +37,13 @@ class RegisterViewModel: ViewModel() {
             ) {
                 _isLoading.value = false
                 if (response.isSuccessful) {
-                    _registerMessage.value = response.body()?.message
+                    _registerMessage.value = response.body()?.message!!
                     _isErrorResponse.value = false
                 } else {
                     _isErrorResponse.value = true
                     val jsonInString = response.errorBody()?.string()
                     val errorBody = Gson().fromJson(jsonInString, ErrorResponse::class.java)
-                    _registerMessage.value = errorBody.message
+                    _registerMessage.value = errorBody.message!!
                 }
             }
 

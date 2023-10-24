@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">StoryApp</string>
+    <string name="welcome_back">Selamat Datang Lagi!</string>
+    <string name="login_desc">Mari kita masuk</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="log_in">Masuk</string>
+    <string name="dont_have_account">Tidak punya akun? Daftar</string>
+    <string name="register_title">Ayo Mulai!</string>
+    <string name="register_desc">Membuat akun baru</string>
+    <string name="name">Nama</string>
+    <string name="have_an_account">Sudah punya akun? Masuk</string>
+    <string name="sign_up">Daftar</string>
+    <string name="success">Berhasil</string>
+    <string name="login_success_desc">Selamat Datang</string>
+    <string name="empty_image_warning">Masukkan gambar terlebih dahulu</string>
+    <string name="empty_view">Tidak ada yang bisa dilihat</string>
+    <string name="story_name">Nama</string>
+    <string name="story_create">Dibuat pada</string>
+    <string name="story_desc">Deskripsi</string>
+</resources>

@@ -7,10 +7,6 @@
     android:background="@color/md_theme_light_primary"
     tools:context=".views.login.LoginActivity">
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
     <ImageView
         android:id="@+id/loginIcon"
         android:layout_width="0dp"
@@ -43,6 +39,8 @@
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.Material3.DisplaySmall"
             android:textStyle="bold"
+            android:alpha="0"
+            tools:alpha="100"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -56,6 +54,8 @@
             android:text="@string/login_desc"
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+            android:alpha="0"
+            tools:alpha="100"
             app:layout_constraintEnd_toEndOf="@+id/welcomeTitle"
             app:layout_constraintStart_toStartOf="@+id/welcomeTitle"
             app:layout_constraintTop_toBottomOf="@+id/welcomeTitle" />
@@ -67,6 +67,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="48dp"
             android:hint="@string/email"
+            android:alpha="0"
+            tools:alpha="100"
             app:endIconMode="clear_text"
             app:errorEnabled="true"
             app:placeholderText="email@email.com"
@@ -90,6 +92,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:hint="@string/password"
+            android:alpha="0"
+            tools:alpha="100"
             app:endIconMode="password_toggle"
             app:errorEnabled="true"
             app:placeholderText="********"
@@ -112,6 +116,8 @@
             android:layout_height="wrap_content"
             android:text="@string/log_in"
             android:enabled="false"
+            android:alpha="0"
+            tools:alpha="100"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -123,6 +129,8 @@
             android:layout_marginBottom="8dp"
             android:text="@string/dont_have_account"
             android:textAlignment="center"
+            android:alpha="0"
+            tools:alpha="100"
             app:layout_constraintBottom_toTopOf="@+id/btnLogin"
             app:layout_constraintEnd_toEndOf="@+id/btnLogin"
             app:layout_constraintStart_toStartOf="@+id/btnLogin" />

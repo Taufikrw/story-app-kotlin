@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import com.dicoding.storyapp.data.UserPreferences
 import com.dicoding.storyapp.data.remote.response.ListStoryItem
 import com.dicoding.storyapp.data.remote.response.StoryResponse
@@ -30,7 +31,7 @@ class StoryViewModel(): ViewModel() {
 
             override fun onFailure(call: Call<StoryResponse>, t: Throwable) {
                 _isLoading.value = false
-                Log.e(StoryViewModel.TAG, "onFailure: ${t.message.toString()}")
+                Log.e(TAG, "onFailure: ${t.message.toString()}")
             }
 
         })
