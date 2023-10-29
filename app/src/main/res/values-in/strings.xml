@@ -19,4 +19,7 @@
     <string name="story_name">Nama</string>
     <string name="story_create">Dibuat pada</string>
     <string name="story_desc">Deskripsi</string>
+    <string name="photo_of_story">Foto dari story</string>
+    <string name="req_password">Password minimal terdiri dari 8 huruf</string>
+    <string name="req_email">Email tidak sesuai</string>
 </resources>

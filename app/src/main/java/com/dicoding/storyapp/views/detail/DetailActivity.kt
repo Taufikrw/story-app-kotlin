@@ -22,9 +22,11 @@ class DetailActivity : AppCompatActivity() {
             @Suppress("DEPRECATION")
             intent.getParcelableExtra(STORY_DATA)
         }
-        binding.tvName.text = story?.name
-        binding.tvCreate.text = story?.createdAt
-        binding.tvDesc.text = story?.description
+        binding.apply {
+            tvName.text = story?.name
+            tvCreate.text = story?.createdAt
+            tvDesc.text = story?.description
+        }
         Glide.with(this)
             .load(story?.photoUrl)
             .into(binding.ivPhotoUrl)

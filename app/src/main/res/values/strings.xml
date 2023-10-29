@@ -18,4 +18,7 @@
     <string name="story_name">Name</string>
     <string name="story_create">Created_at</string>
     <string name="story_desc">Description</string>
+    <string name="photo_of_story">Photo of Story</string>
+    <string name="req_password">Password minimun is 8 character</string>
+    <string name="req_email">Email is not valid</string>
 </resources>

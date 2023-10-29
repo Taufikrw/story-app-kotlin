@@ -26,7 +26,7 @@ class StoryViewModel(): ViewModel() {
         client.enqueue(object : Callback<StoryResponse> {
             override fun onResponse(call: Call<StoryResponse>, response: Response<StoryResponse>) {
                 _isLoading.value = false
-                _listStory.value = response.body()?.listStory
+                _listStory.postValue(response.body()?.listStory)
             }
 
             override fun onFailure(call: Call<StoryResponse>, t: Throwable) {

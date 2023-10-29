@@ -8,6 +8,7 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import androidx.appcompat.widget.AppCompatEditText
+import com.dicoding.storyapp.R
 
 class EmailEditText: AppCompatEditText, View.OnTouchListener {
     constructor(context: Context) : super(context) {
@@ -33,7 +34,7 @@ class EmailEditText: AppCompatEditText, View.OnTouchListener {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 val emailRegex = Regex("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}\$")
                 if (!emailRegex.matches(s.toString().trim())) {
-                    setError("Email is not valid", null)
+                    setError(resources.getString(R.string.req_email), null)
                 } else {
                     error = null
                 }

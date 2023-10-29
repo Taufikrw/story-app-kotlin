@@ -37,14 +37,16 @@ class MainActivity : AppCompatActivity() {
 
         loginViewModel.getToken().observe(this) {
             token = it
-            viewModel.getStory(it)
         }
+        viewModel.getStory(token.toString())
 
         val layoutManager = LinearLayoutManager(this)
         binding.rvStory.layoutManager = layoutManager
         viewModel.listStory.observe(this) {
             if (it.isNullOrEmpty()) {
-                binding.tvEmpty.visibility = View.VISIBLE
+                binding.tvIsEmpty.visibility = View.VISIBLE
+            } else {
+                binding.tvIsEmpty.visibility = View.GONE
             }
             val adapter = StoryAdapter()
             adapter.submitList(it)

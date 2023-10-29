@@ -47,7 +47,7 @@
         app:srcCompat="@drawable/ic_logout"/>
 
     <TextView
-        android:id="@+id/tvEmpty"
+        android:id="@+id/tvIsEmpty"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/empty_view"
