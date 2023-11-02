@@ -3,20 +3,19 @@ package com.dicoding.storyapp.views
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.dicoding.storyapp.R
 import com.dicoding.storyapp.data.UserPreferences
 import com.dicoding.storyapp.data.dataStore
-import com.dicoding.storyapp.data.remote.response.ListStoryItem
 import com.dicoding.storyapp.databinding.ActivityMainBinding
 import com.dicoding.storyapp.views.addStory.AddStoryActivity
 import com.dicoding.storyapp.views.listStory.StoryViewModel
 import com.dicoding.storyapp.views.login.LoginActivity
 import com.dicoding.storyapp.views.login.LoginViewModel
+import com.dicoding.storyapp.views.maps.MapsActivity
 
 class MainActivity : AppCompatActivity() {
     private val viewModel by viewModels<StoryViewModel>()
@@ -31,14 +30,23 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        binding.topAppBar.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.menu1 -> {
+                    startActivity(Intent(this@MainActivity, MapsActivity::class.java))
+                    true
+                }
+                else -> false
+            }
+        }
+
         viewModel.isLoading.observe(this) {
             binding.progressBar.visibility = if (it) View.VISIBLE else View.GONE
         }
 
         loginViewModel.getToken().observe(this) {
-            token = it
+            viewModel.getStory(it)
         }
-        viewModel.getStory(token.toString())
 
         val layoutManager = LinearLayoutManager(this)
         binding.rvStory.layoutManager = layoutManager
