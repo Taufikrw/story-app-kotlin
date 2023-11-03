@@ -12,6 +12,8 @@ import com.dicoding.storyapp.data.SharedData
 import com.dicoding.storyapp.data.UserPreferences
 import com.dicoding.storyapp.data.dataStore
 import com.dicoding.storyapp.databinding.ActivityMainBinding
+import com.dicoding.storyapp.views.adapter.LoadingStateAdapter
+import com.dicoding.storyapp.views.adapter.StoryAdapter
 import com.dicoding.storyapp.views.addStory.AddStoryActivity
 import com.dicoding.storyapp.views.listStory.StoryViewModel
 import com.dicoding.storyapp.views.login.LoginActivity
@@ -49,11 +51,16 @@ class MainActivity : AppCompatActivity() {
         val layoutManager = LinearLayoutManager(this)
         binding.rvStory.layoutManager = layoutManager
         showLoading(true)
+        val adapter = StoryAdapter()
+        binding.rvStory.adapter = adapter.withLoadStateFooter(
+            footer = LoadingStateAdapter {
+                adapter.retry()
+            }
+        )
+
         viewModel.getStories().observe(this) {
-            val adapter = StoryAdapter()
-            adapter.submitData(lifecycle, it)
             showLoading(false)
-            binding.rvStory.adapter = adapter
+            adapter.submitData(lifecycle, it)
         }
 
         binding.fabAddStory.setOnClickListener {
