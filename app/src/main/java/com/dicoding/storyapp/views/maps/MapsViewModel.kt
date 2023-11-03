@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import com.dicoding.storyapp.data.remote.response.ListStoryItem
 import com.dicoding.storyapp.data.remote.response.StoryResponse
 import com.dicoding.storyapp.data.remote.retrofit.ApiConfig
+import com.dicoding.storyapp.views.listStory.StoryViewModel
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -30,9 +31,14 @@ class MapsViewModel: ViewModel() {
             }
 
             override fun onFailure(call: Call<StoryResponse>, t: Throwable) {
-                TODO("Not yet implemented")
+                _isLoading.value = false
+                Log.e(TAG, "onFailure: ${t.message.toString()}")
             }
 
         })
+    }
+
+    companion object {
+        private const val TAG = "MapsViewModel"
     }
 }

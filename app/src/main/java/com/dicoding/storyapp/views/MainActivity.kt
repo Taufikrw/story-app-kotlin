@@ -8,6 +8,7 @@ import androidx.activity.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dicoding.storyapp.R
+import com.dicoding.storyapp.data.SharedData
 import com.dicoding.storyapp.data.UserPreferences
 import com.dicoding.storyapp.data.dataStore
 import com.dicoding.storyapp.databinding.ActivityMainBinding
@@ -18,9 +19,10 @@ import com.dicoding.storyapp.views.login.LoginViewModel
 import com.dicoding.storyapp.views.maps.MapsActivity
 
 class MainActivity : AppCompatActivity() {
-    private val viewModel by viewModels<StoryViewModel>()
+    private val viewModel: StoryViewModel by viewModels {
+        com.dicoding.storyapp.views.listStory.ViewModelFactory(this)
+    }
     private lateinit var binding: ActivityMainBinding
-    private var token: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val pref = UserPreferences.getInstance(application.dataStore)
@@ -40,24 +42,17 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        viewModel.isLoading.observe(this) {
-            binding.progressBar.visibility = if (it) View.VISIBLE else View.GONE
-        }
-
         loginViewModel.getToken().observe(this) {
-            viewModel.getStory(it)
+            SharedData.token = it
         }
 
         val layoutManager = LinearLayoutManager(this)
         binding.rvStory.layoutManager = layoutManager
-        viewModel.listStory.observe(this) {
-            if (it.isNullOrEmpty()) {
-                binding.tvIsEmpty.visibility = View.VISIBLE
-            } else {
-                binding.tvIsEmpty.visibility = View.GONE
-            }
+        showLoading(true)
+        viewModel.getStories().observe(this) {
             val adapter = StoryAdapter()
-            adapter.submitList(it)
+            adapter.submitData(lifecycle, it)
+            showLoading(false)
             binding.rvStory.adapter = adapter
         }
 
@@ -74,6 +69,10 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        viewModel.getStory(token.toString())
+        viewModel.getStories()
+    }
+
+    private fun showLoading(isLoading: Boolean) {
+        binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 }
