@@ -9,19 +9,26 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.dicoding.storyapp.views.MainActivity
 import com.dicoding.storyapp.R
 import com.dicoding.storyapp.customview.EmailEditText
 import com.dicoding.storyapp.customview.PasswordEditText
+import com.dicoding.storyapp.data.Result
 import com.dicoding.storyapp.data.UserPreferences
 import com.dicoding.storyapp.data.dataStore
 import com.dicoding.storyapp.databinding.ActivityLoginBinding
 import com.dicoding.storyapp.views.ViewModelFactory
 import com.dicoding.storyapp.views.register.RegisterActivity
+import kotlinx.coroutines.launch
 
 class LoginActivity : AppCompatActivity() {
+    private val viewModel by viewModels<LoginViewModel> {
+        ViewModelFactory.getInstance(this)
+    }
     private lateinit var binding: ActivityLoginBinding
     private lateinit var passwordEditText: PasswordEditText
     private lateinit var emailEditText: EmailEditText
@@ -29,9 +36,6 @@ class LoginActivity : AppCompatActivity() {
     private var correctPassword = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        val pref = UserPreferences.getInstance(application.dataStore)
-        val viewModel = ViewModelProvider(this, ViewModelFactory(pref))[LoginViewModel::class.java]
-
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -89,41 +93,47 @@ class LoginActivity : AppCompatActivity() {
             startActivity(Intent(this, RegisterActivity::class.java))
         }
 
-        viewModel.isLoading.observe(this) {
-            binding.progressBar.visibility = if (it) View.VISIBLE else View.GONE
-        }
-
         binding.btnLogin.setOnClickListener {
-            viewModel.login(
-                emailEditText.text.toString(),
-                passwordEditText.text.toString()
-            )
-        }
-
-        viewModel.isErrorResponse.observe(this) {
-            viewModel.loginMessage.observe(this) { message ->
-                if (it) {
-                    Toast.makeText(this@LoginActivity, message, Toast.LENGTH_SHORT).show()
-                } else {
-                    viewModel.loginResult.observe(this) { result ->
-                        AlertDialog.Builder(this).apply {
-                            setTitle(R.string.success)
-                            setMessage(R.string.login_success_desc)
-                            setPositiveButton("Lanjut") { _, _ ->
-                                viewModel.saveToken("Bearer " + result.token)
-                                val loginIntent = Intent(this@LoginActivity, MainActivity::class.java)
-                                startActivity(loginIntent)
-                                finish()
+            lifecycleScope.launch {
+                viewModel.login(
+                    emailEditText.text.toString(),
+                    passwordEditText.text.toString()
+                ).observe(this@LoginActivity) { result ->
+                    if (result != null) {
+                        when (result) {
+                            is Result.Loading -> {
+                                showLoading(true)
                             }
-                            create()
-                            show()
+
+                            is Result.Success -> {
+                                showLoading(false)
+                                AlertDialog.Builder(this@LoginActivity).apply {
+                                    setTitle(R.string.success)
+                                    setMessage(R.string.login_success_desc)
+                                    setPositiveButton(R.string.next) { _, _ ->
+                                        saveSession(result.data.loginResult?.token.toString())
+                                        val loginIntent =
+                                            Intent(this@LoginActivity, MainActivity::class.java)
+                                        ViewModelFactory.clearInstance()
+                                        startActivity(loginIntent)
+                                        finish()
+                                    }
+                                    create()
+                                    show()
+                                }
+                            }
+
+                            is Result.Error -> {
+                                showLoading(false)
+                                Toast.makeText(this@LoginActivity, result.error, Toast.LENGTH_SHORT).show()
+                            }
                         }
                     }
                 }
             }
         }
 
-        // TODO DataStore Sementara
+        // CEK TOKEN LOGIN DataStore
         viewModel.getToken().observe(this) {
             if (it.isNotEmpty()) {
                 startActivity(
@@ -161,11 +171,17 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
+    private fun saveSession(token: String) {
+        lifecycleScope.launch {
+            viewModel.saveToken(token)
+        }
+    }
+
     private fun enableButton() {
         binding.btnLogin.isEnabled = correctEmail && correctPassword
     }
 
-    companion object {
-        const val EXTRA_MESSAGE = "extra_message"
+    private fun showLoading(isLoading: Boolean) {
+        binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 }

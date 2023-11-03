@@ -15,8 +15,10 @@ import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.dicoding.storyapp.R
+import com.dicoding.storyapp.data.Result
 import com.dicoding.storyapp.data.UserPreferences
 import com.dicoding.storyapp.data.dataStore
+import com.dicoding.storyapp.data.remote.response.ErrorResponse
 import com.dicoding.storyapp.data.remote.response.FileUploadResponse
 import com.dicoding.storyapp.data.remote.retrofit.ApiConfig
 import com.dicoding.storyapp.databinding.ActivityAddStoryBinding
@@ -25,6 +27,7 @@ import com.dicoding.storyapp.reduceFileImage
 import com.dicoding.storyapp.uriToFile
 import com.dicoding.storyapp.views.MainActivity
 import com.dicoding.storyapp.views.ViewModelFactory
+import com.dicoding.storyapp.views.listStory.StoryViewModel
 import com.dicoding.storyapp.views.login.LoginActivity
 import com.dicoding.storyapp.views.login.LoginViewModel
 import com.google.gson.Gson
@@ -36,7 +39,9 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.HttpException
 
 class AddStoryActivity : AppCompatActivity() {
-    private val viewModel by viewModels<AddStoryViewModel>()
+    private val viewModel by viewModels<AddStoryViewModel> {
+        ViewModelFactory.getInstance(this)
+    }
     private lateinit var binding: ActivityAddStoryBinding
     private var currentImageUri: Uri? = null
     private val launcherGallery = registerForActivityResult(
@@ -58,9 +63,6 @@ class AddStoryActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        val pref = UserPreferences.getInstance(application.dataStore)
-        val loginViewModel = ViewModelProvider(this, ViewModelFactory(pref))[LoginViewModel::class.java]
-
         super.onCreate(savedInstanceState)
         binding = ActivityAddStoryBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -78,8 +80,6 @@ class AddStoryActivity : AppCompatActivity() {
                 val description = binding.etDesc.text.toString()
                 Log.d("desc: ", description)
 
-                showLoading(true)
-
                 val requestBody = description.toRequestBody("text/plain".toMediaType())
                 val requestImageFile = imageFile.asRequestBody("image/jpeg".toMediaType())
                 val multipartBody = MultipartBody.Part.createFormData(
@@ -87,35 +87,52 @@ class AddStoryActivity : AppCompatActivity() {
                     imageFile.name,
                     requestImageFile
                 )
-                loginViewModel.getToken().observe(this) { token ->
-                    viewModel.postStory(token, multipartBody, requestBody)
+                try {
+                    lifecycleScope.launch {
+                        viewModel.postStory(
+                            multipartBody,
+                            requestBody
+                        ).observe(this@AddStoryActivity) { result ->
+                            if (result != null) {
+                                when (result) {
+                                    is Result.Loading -> {
+                                        showLoading(true)
+                                    }
+
+                                    is Result.Success -> {
+                                        showLoading(false)
+                                        AlertDialog.Builder(this@AddStoryActivity).apply {
+                                            setTitle(R.string.success)
+                                            setMessage(result.data.message)
+                                            setPositiveButton(R.string.next) { _, _ ->
+                                                val loginIntent = Intent(
+                                                    this@AddStoryActivity,
+                                                    MainActivity::class.java
+                                                )
+                                                loginIntent.flags =
+                                                    Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+                                                startActivity(loginIntent)
+                                                finish()
+                                            }
+                                            create()
+                                            show()
+                                        }
+                                    }
+
+                                    is Result.Error -> {
+                                        showLoading(false)
+                                        showToast(result.error)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } catch (e: HttpException) {
+                    val jsonInString = e.response()?.errorBody()?.string()
+                    val errorBody = Gson().fromJson(jsonInString, ErrorResponse::class.java)
+                    showToast(errorBody.message.toString())
                 }
             } ?: showToast(getString(R.string.empty_image_warning))
-        }
-
-        viewModel.isLoading.observe(this) {
-            showLoading(it)
-        }
-
-        viewModel.isErrorResponse.observe(this) {
-            viewModel.uploadMessage.observe(this) { message ->
-                if (it) {
-                    Toast.makeText(this@AddStoryActivity, message, Toast.LENGTH_SHORT).show()
-                } else {
-                    AlertDialog.Builder(this).apply {
-                        setTitle(R.string.success)
-                        setMessage(message)
-                        setPositiveButton("Lanjut") { _, _ ->
-                            val loginIntent = Intent(this@AddStoryActivity, MainActivity::class.java)
-                            loginIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-                            startActivity(loginIntent)
-                            finish()
-                        }
-                        create()
-                        show()
-                    }
-                }
-            }
         }
     }
 

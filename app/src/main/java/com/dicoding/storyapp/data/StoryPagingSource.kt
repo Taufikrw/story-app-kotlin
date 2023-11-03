@@ -1,5 +1,6 @@
 package com.dicoding.storyapp.data
 
+import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.dicoding.storyapp.data.remote.response.ListStoryItem
@@ -16,7 +17,7 @@ class StoryPagingSource(private val apiService: ApiService): PagingSource<Int, L
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, ListStoryItem> {
         return try {
             val position = params.key ?: INITIAL_PAGE_INDEX
-            val responseData = apiService.getListStory(SharedData.token ,position, params.loadSize)
+            val responseData = apiService.getListStory(position, params.loadSize)
             LoadResult.Page(
                 data = responseData.listStory,
                 prevKey = if (position == INITIAL_PAGE_INDEX) null else position - 1,
@@ -27,7 +28,10 @@ class StoryPagingSource(private val apiService: ApiService): PagingSource<Int, L
         }
     }
 
-    private companion object {
+    companion object {
         const val INITIAL_PAGE_INDEX = 1
+        fun snapshot(items: List<ListStoryItem>): PagingData<ListStoryItem> {
+            return PagingData.from(items)
+        }
     }
 }

@@ -7,19 +7,26 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
+import androidx.lifecycle.lifecycleScope
 import com.dicoding.storyapp.R
 import com.dicoding.storyapp.customview.EmailEditText
 import com.dicoding.storyapp.customview.PasswordEditText
+import com.dicoding.storyapp.data.Result
 import com.dicoding.storyapp.databinding.ActivityRegisterBinding
+import com.dicoding.storyapp.views.ViewModelFactory
 import com.dicoding.storyapp.views.login.LoginActivity
+import kotlinx.coroutines.launch
 
 class RegisterActivity : AppCompatActivity() {
-    private val viewModel by viewModels<RegisterViewModel>()
+    private val viewModel by viewModels<RegisterViewModel> {
+        ViewModelFactory.getInstance(this)
+    }
     private lateinit var binding: ActivityRegisterBinding
     private lateinit var passwordEditText: PasswordEditText
     private lateinit var emailEditText: EmailEditText
@@ -102,33 +109,41 @@ class RegisterActivity : AppCompatActivity() {
             startActivity(Intent(this, LoginActivity::class.java))
         }
 
-        viewModel.isLoading.observe(this) {
-            binding.progressBar.visibility = if (it) View.VISIBLE else View.GONE
-        }
-
         binding.btnSignUp.setOnClickListener {
-            viewModel.postRegister(
-                nameEditText.text.toString(),
-                emailEditText.text.toString(),
-                passwordEditText.text.toString()
-            )
-        }
+            lifecycleScope.launch {
+                viewModel.postRegister(
+                    nameEditText.text.toString(),
+                    emailEditText.text.toString(),
+                    passwordEditText.text.toString()
+                ).observe(this@RegisterActivity) { result ->
+                    Log.d("TEST", result.toString())
+                    if (result != null) {
+                        when (result) {
+                            is Result.Loading -> {
+                                showLoading(true)
+                            }
 
-        viewModel.isErrorResponse.observe(this) {
-            viewModel.registerMessage.observe(this) { message ->
-                if (it) {
-                    Toast.makeText(this@RegisterActivity, message, Toast.LENGTH_SHORT).show()
-                } else {
-                    AlertDialog.Builder(this).apply {
-                        setTitle(R.string.success)
-                        setMessage(message)
-                        setPositiveButton("Lanjut") { _, _ ->
-                            val loginIntent = Intent(this@RegisterActivity, LoginActivity::class.java)
-                            startActivity(loginIntent)
-                            finish()
+                            is Result.Success -> {
+                                showLoading(false)
+                                AlertDialog.Builder(this@RegisterActivity).apply {
+                                    setTitle(R.string.success)
+                                    setMessage(result.data.message)
+                                    setPositiveButton("Lanjut") { _, _ ->
+                                        val loginIntent =
+                                            Intent(this@RegisterActivity, LoginActivity::class.java)
+                                        startActivity(loginIntent)
+                                        finish()
+                                    }
+                                    create()
+                                    show()
+                                }
+                            }
+
+                            is Result.Error -> {
+                                showLoading(false)
+                                Toast.makeText(this@RegisterActivity, result.error, Toast.LENGTH_SHORT).show()
+                            }
                         }
-                        create()
-                        show()
                     }
                 }
             }
@@ -166,5 +181,9 @@ class RegisterActivity : AppCompatActivity() {
 
     private fun enableButton() {
         binding.btnSignUp.isEnabled = correctEmail && correctPassword && correctName
+    }
+
+    private fun showLoading(isLoading: Boolean) {
+        binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 }

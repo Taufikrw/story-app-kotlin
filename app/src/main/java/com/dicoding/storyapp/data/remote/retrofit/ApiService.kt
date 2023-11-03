@@ -19,42 +19,34 @@ import retrofit2.http.Query
 interface ApiService {
     @FormUrlEncoded
     @POST("register")
-    fun register(
+    suspend fun register(
         @Field("name") name: String,
         @Field("email") email: String,
         @Field("password") password: String
-    ): Call<RegisterResponse>
+    ): RegisterResponse
 
     @FormUrlEncoded
     @POST("login")
-    fun login(
+    suspend fun login(
         @Field("email") email: String,
         @Field("password") password: String
-    ): Call<LoginResponse>
-
-    @GET("stories")
-    fun getStories(
-        @Header("Authorization") token: String,
-    ): Call<StoryResponse>
+    ): LoginResponse
 
     @Multipart
     @POST("stories")
-    fun uploadImage(
-        @Header("Authorization") token: String,
+    suspend fun uploadImage(
         @Part file: MultipartBody.Part,
         @Part("description") description: RequestBody,
-    ): Call<FileUploadResponse>
-
-    @GET("stories")
-    fun getStoriesWithLocation(
-        @Header("Authorization") token: String,
-        @Query("location") location : Int = 1
-    ): Call<StoryResponse>
+    ): FileUploadResponse
 
     @GET("stories")
     suspend fun getListStory(
-        @Header("Authorization") token: String,
         @Query("page") page: Int,
         @Query("size") size: Int,
+    ): StoryResponse
+
+    @GET("stories")
+    suspend fun getStoriesWithLocation(
+        @Query("location") location : Int = 1,
     ): StoryResponse
 }

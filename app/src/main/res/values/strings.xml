@@ -23,4 +23,5 @@
     <string name="req_email">Email is not valid</string>
     <string name="title_activity_maps">MapsActivity</string>
     <string name="retry">Retry Again</string>
+    <string name="next">Next</string>
 </resources>

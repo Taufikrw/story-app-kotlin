@@ -20,19 +20,12 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class StoryViewModel(private val storyRepository: StoryRepository): ViewModel() {
-    private val _isLoading = MutableLiveData<Boolean>()
-    val isLoading: LiveData<Boolean> = _isLoading
+class StoryViewModel(private val repository: StoryRepository): ViewModel() {
+    val getStories: LiveData<PagingData<ListStoryItem>> = repository.getStory().cachedIn(viewModelScope)
 
-    fun getStories(): LiveData<PagingData<ListStoryItem>> = storyRepository.getStory().cachedIn(viewModelScope)
-}
+    fun getToken(): LiveData<String> = repository.getSession().asLiveData()
 
-class ViewModelFactory(private val context: Context) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(StoryViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
-            return StoryViewModel(Injection.provideRepository()) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
+    suspend fun logout() {
+        repository.destroyToken()
     }
 }

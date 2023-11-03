@@ -3,9 +3,13 @@ package com.dicoding.storyapp.views.maps
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.dicoding.storyapp.R
+import com.dicoding.storyapp.data.Result
 import com.dicoding.storyapp.data.UserPreferences
 import com.dicoding.storyapp.data.dataStore
 
@@ -19,17 +23,18 @@ import com.dicoding.storyapp.databinding.ActivityMapsBinding
 import com.dicoding.storyapp.views.ViewModelFactory
 import com.dicoding.storyapp.views.login.LoginViewModel
 import com.google.android.gms.maps.model.LatLngBounds
+import kotlinx.coroutines.launch
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
     private lateinit var binding: ActivityMapsBinding
-    private val viewModel by viewModels<MapsViewModel>()
+    private val viewModel by viewModels<MapsViewModel> {
+        ViewModelFactory.getInstance(this)
+    }
     private val boundsBuilder = LatLngBounds.Builder()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        val pref = UserPreferences.getInstance(application.dataStore)
-        val loginViewModel = ViewModelProvider(this, ViewModelFactory(pref))[LoginViewModel::class.java]
 
         super.onCreate(savedInstanceState)
 
@@ -40,10 +45,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
-
-        loginViewModel.getToken().observe(this) {
-            viewModel.getUserLocation(it, 1)
-        }
     }
 
     /**
@@ -58,25 +59,47 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
 
-        viewModel.listStory.observe(this) {
-            it.forEach { user ->
-                if (user.lat != null && user.lon != null) {
-                    val latLng = LatLng(user.lat, user.lon)
-                    mMap.addMarker(MarkerOptions().position(latLng).title(user.name).snippet(user.description))
-                    boundsBuilder.include(latLng)
+        lifecycleScope.launch {
+            viewModel.getStoryWithLocation().observe(this@MapsActivity) { result ->
+                if (result != null) {
+                    when (result) {
+                        is Result.Loading -> {
+                            Log.d(TAG, "Maps Loading")
+                        }
+
+                        is Result.Success -> {
+                            result.data.listStory.forEach { user ->
+                                if (user.lat != null && user.lon != null) {
+                                    val latLng = LatLng(user.lat, user.lon)
+                                    mMap.addMarker(
+                                        MarkerOptions().position(latLng).title(user.name)
+                                            .snippet(user.description)
+                                    )
+                                    boundsBuilder.include(latLng)
+                                }
+                            }
+
+                            val bounds: LatLngBounds = boundsBuilder.build()
+                            mMap.animateCamera(
+                                CameraUpdateFactory.newLatLngBounds(
+                                    bounds,
+                                    resources.displayMetrics.widthPixels,
+                                    resources.displayMetrics.heightPixels,
+                                    300
+                                )
+                            )
+                        }
+
+                        is Result.Error -> {
+                            Toast.makeText(this@MapsActivity, result.error, Toast.LENGTH_SHORT).show()
+                        }
+                    }
                 }
             }
-
-            val bounds: LatLngBounds = boundsBuilder.build()
-            mMap.animateCamera(
-                CameraUpdateFactory.newLatLngBounds(
-                    bounds,
-                    resources.displayMetrics.widthPixels,
-                    resources.displayMetrics.heightPixels,
-                    300
-                )
-            )
-
         }
+    }
+
+    companion object {
+        private const val TAG = "MapsActivity"
     }
 }

@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dicoding.storyapp.R
 import com.dicoding.storyapp.data.SharedData
@@ -19,20 +20,20 @@ import com.dicoding.storyapp.views.listStory.StoryViewModel
 import com.dicoding.storyapp.views.login.LoginActivity
 import com.dicoding.storyapp.views.login.LoginViewModel
 import com.dicoding.storyapp.views.maps.MapsActivity
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
     private val viewModel: StoryViewModel by viewModels {
-        com.dicoding.storyapp.views.listStory.ViewModelFactory(this)
+        ViewModelFactory.getInstance(this)
     }
     private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        val pref = UserPreferences.getInstance(application.dataStore)
-        val loginViewModel = ViewModelProvider(this, ViewModelFactory(pref))[LoginViewModel::class.java]
 
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        val adapter = StoryAdapter()
 
         binding.topAppBar.setOnMenuItemClickListener {
             when (it.itemId) {
@@ -44,23 +45,23 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        loginViewModel.getToken().observe(this) {
-            SharedData.token = it
+        showLoading(true)
+        viewModel.getToken().observe(this) {
+            lifecycleScope.launch {
+                viewModel.getStories.observe(this@MainActivity) {
+                    adapter.submitData(lifecycle, it)
+                    showLoading(false)
+                }
+            }
         }
 
-        val layoutManager = LinearLayoutManager(this)
-        binding.rvStory.layoutManager = layoutManager
-        showLoading(true)
-        val adapter = StoryAdapter()
-        binding.rvStory.adapter = adapter.withLoadStateFooter(
-            footer = LoadingStateAdapter {
-                adapter.retry()
-            }
-        )
-
-        viewModel.getStories().observe(this) {
-            showLoading(false)
-            adapter.submitData(lifecycle, it)
+        binding.rvStory.apply {
+            layoutManager = LinearLayoutManager(this@MainActivity)
+            this.adapter = adapter.withLoadStateFooter(
+                footer = LoadingStateAdapter {
+                    adapter.retry()
+                }
+            )
         }
 
         binding.fabAddStory.setOnClickListener {
@@ -68,7 +69,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.fabLogout.setOnClickListener {
-            loginViewModel.destroyToken()
+            lifecycleScope.launch {
+                viewModel.logout()
+            }
             startActivity(Intent(this@MainActivity, LoginActivity::class.java))
             finish()
         }
@@ -76,7 +79,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        viewModel.getStories()
+        viewModel.getStories
     }
 
     private fun showLoading(isLoading: Boolean) {
