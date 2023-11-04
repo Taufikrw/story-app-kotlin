@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.dicoding.storyapp.data.Injection
 import com.dicoding.storyapp.data.StoryRepository
-import com.dicoding.storyapp.data.UserPreferences
 import com.dicoding.storyapp.views.addStory.AddStoryViewModel
 import com.dicoding.storyapp.views.listStory.StoryViewModel
 import com.dicoding.storyapp.views.login.LoginViewModel

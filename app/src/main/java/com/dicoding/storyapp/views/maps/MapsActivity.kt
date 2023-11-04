@@ -4,15 +4,11 @@ import android.content.res.Resources
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.dicoding.storyapp.R
 import com.dicoding.storyapp.data.Result
-import com.dicoding.storyapp.data.UserPreferences
-import com.dicoding.storyapp.data.dataStore
 
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -22,7 +18,6 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.dicoding.storyapp.databinding.ActivityMapsBinding
 import com.dicoding.storyapp.views.ViewModelFactory
-import com.dicoding.storyapp.views.login.LoginViewModel
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MapStyleOptions
 import kotlinx.coroutines.launch

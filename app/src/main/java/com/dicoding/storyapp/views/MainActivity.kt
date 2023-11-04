@@ -5,20 +5,15 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dicoding.storyapp.R
-import com.dicoding.storyapp.data.SharedData
-import com.dicoding.storyapp.data.UserPreferences
-import com.dicoding.storyapp.data.dataStore
 import com.dicoding.storyapp.databinding.ActivityMainBinding
 import com.dicoding.storyapp.views.adapter.LoadingStateAdapter
 import com.dicoding.storyapp.views.adapter.StoryAdapter
 import com.dicoding.storyapp.views.addStory.AddStoryActivity
 import com.dicoding.storyapp.views.listStory.StoryViewModel
 import com.dicoding.storyapp.views.login.LoginActivity
-import com.dicoding.storyapp.views.login.LoginViewModel
 import com.dicoding.storyapp.views.maps.MapsActivity
 import kotlinx.coroutines.launch
 

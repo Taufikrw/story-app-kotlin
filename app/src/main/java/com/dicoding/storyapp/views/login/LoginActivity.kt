@@ -11,15 +11,12 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.dicoding.storyapp.views.MainActivity
 import com.dicoding.storyapp.R
 import com.dicoding.storyapp.customview.EmailEditText
 import com.dicoding.storyapp.customview.PasswordEditText
 import com.dicoding.storyapp.data.Result
-import com.dicoding.storyapp.data.UserPreferences
-import com.dicoding.storyapp.data.dataStore
 import com.dicoding.storyapp.databinding.ActivityLoginBinding
 import com.dicoding.storyapp.views.ViewModelFactory
 import com.dicoding.storyapp.views.register.RegisterActivity

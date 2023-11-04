@@ -1,13 +1,14 @@
 package com.dicoding.storyapp.data
 
-import android.util.Log
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.liveData
+import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.liveData
+import com.dicoding.storyapp.data.database.StoryDatabase
+import com.dicoding.storyapp.data.preferences.UserPreferences
 import com.dicoding.storyapp.data.remote.response.ErrorResponse
 import com.dicoding.storyapp.data.remote.response.FileUploadResponse
 import com.dicoding.storyapp.data.remote.response.ListStoryItem
@@ -22,6 +23,7 @@ import okhttp3.RequestBody
 import retrofit2.HttpException
 
 class StoryRepository(
+    private val database: StoryDatabase,
     private val apiService: ApiService,
     private val userPreferences: UserPreferences
 ) {
@@ -60,12 +62,14 @@ class StoryRepository(
     }
 
     fun getStory(): LiveData<PagingData<ListStoryItem>> {
+        @OptIn(ExperimentalPagingApi::class)
         return Pager(
             config = PagingConfig(
                 pageSize = 5
             ),
+            remoteMediator = StoryRemoteMediator(database, apiService),
             pagingSourceFactory = {
-                StoryPagingSource(apiService)
+                database.storyDao().getAll()
             }
         ).liveData
     }
@@ -110,11 +114,12 @@ class StoryRepository(
         }
 
         fun getInstance(
+            database: StoryDatabase,
             apiService: ApiService,
             userPreference: UserPreferences
         ): StoryRepository =
             instance ?: synchronized(this) {
-                instance ?: StoryRepository(apiService, userPreference)
+                instance ?: StoryRepository(database, apiService, userPreference)
             }.also { instance = it }
     }
 }

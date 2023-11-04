@@ -1,4 +1,4 @@
-package com.dicoding.storyapp.data
+package com.dicoding.storyapp.data.preferences
 
 import android.content.Context
 import androidx.datastore.core.DataStore
