@@ -8,7 +8,7 @@ object DataDummy {
         for (i in 0..100) {
             val story = ListStoryItem(
                 i.toString(),
-                "https://picsum.photos/seed/picsum/200/300",
+                "https://source.unsplash.com/story",
                 "Title $i",
                 "Description $i",
                 0.0,

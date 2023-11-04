@@ -44,6 +44,7 @@ android {
     }
     testOptions {
         unitTests.isReturnDefaultValues = true
+        animationsDisabled = true
     }
 }
 
@@ -72,14 +73,21 @@ dependencies {
     implementation("androidx.room:room-runtime:2.5.2")
     implementation("com.google.android.gms:play-services-maps:18.2.0")
     implementation("com.google.android.gms:play-services-location:21.0.1")
+    implementation("androidx.test.espresso:espresso-idling-resource:3.5.1")
 
     testImplementation("junit:junit:4.13.2")
     testImplementation("androidx.arch.core:core-testing:2.2.0") // InstantTaskExecutorRule
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.1") //TestDispatcher
     testImplementation("org.mockito:mockito-core:3.12.4")
     testImplementation("org.mockito:mockito-inline:3.12.4")
+    testImplementation("junit:junit:4.12")
+    testImplementation("junit:junit:4.12")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    androidTestImplementation("androidx.arch.core:core-testing:2.2.0") // InstantTaskExecutorRule
+    androidTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.1") //TestCoroutineDispatcher
+    debugImplementation("androidx.fragment:fragment-testing:1.6.2") //launchFragmentInContainer
+    androidTestImplementation("com.android.support.test.espresso:espresso-contrib:3.0.2") //RecyclerViewActions
 
     ksp("androidx.room:room-compiler:2.5.2")
 }

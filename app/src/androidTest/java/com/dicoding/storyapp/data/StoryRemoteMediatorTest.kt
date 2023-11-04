@@ -76,12 +76,21 @@ class FakeApiService : ApiService {
         TODO("Not yet implemented")
     }
 
+    override suspend fun uploadImageWithLocation(
+        file: MultipartBody.Part,
+        description: RequestBody,
+        lat: Float,
+        lon: Float
+    ): FileUploadResponse {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun getListStory(page: Int, size: Int): StoryResponse {
         val items: MutableList<ListStoryItem> = arrayListOf()
 
         for (i in 0..100) {
             val story = ListStoryItem(
-                "https://picsum.photos/seed/$i/200/300",
+                "https://source.unsplash.com/story",
                 "0.0",
                 "Title $i",
                 "Description $i",
