@@ -128,7 +128,7 @@ class RegisterActivity : AppCompatActivity() {
                                 AlertDialog.Builder(this@RegisterActivity).apply {
                                     setTitle(R.string.success)
                                     setMessage(result.data.message)
-                                    setPositiveButton("Lanjut") { _, _ ->
+                                    setPositiveButton(R.string.next) { _, _ ->
                                         val loginIntent =
                                             Intent(this@RegisterActivity, LoginActivity::class.java)
                                         startActivity(loginIntent)

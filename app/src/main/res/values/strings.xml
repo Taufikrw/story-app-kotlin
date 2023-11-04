@@ -19,7 +19,7 @@
     <string name="story_create">Created_at</string>
     <string name="story_desc">Description</string>
     <string name="photo_of_story">Photo of Story</string>
-    <string name="req_password">Password minimun is 8 character</string>
+    <string name="req_password">Password minimum is 8 character</string>
     <string name="req_email">Email is not valid</string>
     <string name="title_activity_maps" translatable="false">MapsActivity</string>
     <string name="retry">Retry Again</string>
@@ -30,4 +30,8 @@
     <string name="description">Description</string>
     <string name="upload">Upload</string>
     <string name="enter_location">Enter your location (optional)</string>
+    <string name="login_icon" translatable="false">Login Icon</string>
+    <string name="add_story_icon" translatable="false">Add Story Icon</string>
+    <string name="register_icon" translatable="false">Register Icon</string>
+    <string name="story_image" translatable="false">Story Image</string>
 </resources>

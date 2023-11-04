@@ -1,7 +1,6 @@
 package com.dicoding.storyapp.views.addStory
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.dicoding.storyapp.data.Result
 import com.dicoding.storyapp.data.StoryRepository

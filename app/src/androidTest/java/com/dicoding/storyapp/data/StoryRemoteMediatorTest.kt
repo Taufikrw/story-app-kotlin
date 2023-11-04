@@ -25,7 +25,6 @@ import org.junit.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith
 
-@OptIn(ExperimentalCoroutinesApi::class)
 @ExperimentalPagingApi
 @RunWith(AndroidJUnit4::class)
 class StoryRemoteMediatorTest {
