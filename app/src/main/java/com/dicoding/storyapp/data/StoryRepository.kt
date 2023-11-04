@@ -76,11 +76,17 @@ class StoryRepository(
 
     suspend fun postStory(
         file: MultipartBody.Part,
-        description: RequestBody
+        description: RequestBody,
+        lat: Float,
+        lon: Float
     ): LiveData<Result<FileUploadResponse>> = liveData {
         emit(Result.Loading)
         try {
-            val response = apiService.uploadImage(file, description)
+            val response = if (lat != 0F && lon != 0F) {
+                apiService.uploadImageWithLocation(file, description, lat, lon)
+            } else {
+                apiService.uploadImage(file, description)
+            }
             if (response.error == true) {
                 emit(Result.Error(response.message.toString()))
             } else {

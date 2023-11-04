@@ -16,7 +16,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/placeholder_image"
-        android:contentDescription="TODO" />
+        android:contentDescription="@string/placeholder_story" />
 
     <LinearLayout
         android:id="@+id/linearButton"
@@ -32,17 +32,19 @@
             android:id="@+id/btnCamera"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="8dp"
+            android:layout_marginEnd="8dp"
             android:layout_weight="1"
-            android:text="Camera" />
+            android:text="@string/camera"
+            tools:ignore="ButtonStyle" />
 
         <Button
             android:id="@+id/btnGallery"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
             android:layout_weight="1"
-            android:text="Gallery" />
+            android:text="@string/gallery"
+            tools:ignore="ButtonStyle" />
     </LinearLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -50,22 +52,22 @@
         style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:hint="Description"
-        app:placeholderText="Write your description here.."
-        app:layout_constraintBottom_toTopOf="@+id/btnUpload"
+        android:hint="@string/description"
+        app:layout_constraintBottom_toTopOf="@+id/smLocation"
         app:layout_constraintEnd_toEndOf="@+id/btnUpload"
-        app:layout_constraintStart_toStartOf="@+id/btnUpload">
+        app:layout_constraintStart_toStartOf="@+id/btnUpload"
+        app:placeholderText="Write your description here..">
+
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etDesc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="start|top"
             android:inputType="textMultiLine"
             android:lines="6"
-            android:gravity="start|top"
             android:overScrollMode="always"
-            android:scrollbars="vertical"
             android:scrollbarStyle="insideInset"
+            android:scrollbars="vertical"
             android:scrollHorizontally="false" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -74,7 +76,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:text="Upload"
+        android:text="@string/upload"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -90,4 +92,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:visibility="visible" />
+
+    <CheckBox
+        android:id="@+id/smLocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/enter_location"
+        app:layout_constraintBottom_toTopOf="@+id/btnUpload"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

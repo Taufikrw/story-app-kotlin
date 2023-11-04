@@ -21,7 +21,13 @@
     <string name="photo_of_story">Photo of Story</string>
     <string name="req_password">Password minimun is 8 character</string>
     <string name="req_email">Email is not valid</string>
-    <string name="title_activity_maps">MapsActivity</string>
+    <string name="title_activity_maps" translatable="false">MapsActivity</string>
     <string name="retry">Retry Again</string>
     <string name="next">Next</string>
+    <string name="placeholder_story" translatable="false">Placeholder Story</string>
+    <string name="camera">Camera</string>
+    <string name="gallery">Gallery</string>
+    <string name="description">Description</string>
+    <string name="upload">Upload</string>
+    <string name="enter_location">Enter your location (optional)</string>
 </resources>

@@ -1,6 +1,9 @@
 package com.dicoding.storyapp.views.addStory
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.location.Location
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -11,6 +14,7 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.dicoding.storyapp.R
 import com.dicoding.storyapp.data.Result
@@ -21,6 +25,8 @@ import com.dicoding.storyapp.reduceFileImage
 import com.dicoding.storyapp.uriToFile
 import com.dicoding.storyapp.views.MainActivity
 import com.dicoding.storyapp.views.ViewModelFactory
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.gson.Gson
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaType
@@ -52,17 +58,45 @@ class AddStoryActivity : AppCompatActivity() {
             showImage()
         }
     }
+    private val requestPermissionLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.RequestMultiplePermissions()
+        ) { permissions ->
+            when {
+                permissions[Manifest.permission.ACCESS_FINE_LOCATION] ?: false -> {
+                    // Precise location access granted.
+                    getMyLocation()
+                }
+                permissions[Manifest.permission.ACCESS_COARSE_LOCATION] ?: false -> {
+                    // Only approximate location access granted.
+                    getMyLocation()
+                }
+                else -> {
+                    // No location access granted.
+                }
+            }
+        }
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private var lat: Double = 0.0
+    private var lon: Double = 0.0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAddStoryBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+
         binding.btnGallery.setOnClickListener {
             startGallery()
         }
         binding.btnCamera.setOnClickListener {
             startCamera()
+        }
+        binding.smLocation.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                getMyLocation()
+            }
         }
         binding.btnUpload.setOnClickListener {
             currentImageUri?.let { uri ->
@@ -73,6 +107,13 @@ class AddStoryActivity : AppCompatActivity() {
 
                 val requestBody = description.toRequestBody("text/plain".toMediaType())
                 val requestImageFile = imageFile.asRequestBody("image/jpeg".toMediaType())
+
+                if (binding.smLocation.isChecked) {
+                    getMyLocation()
+                } else {
+                    lat = 0.0
+                    lon = 0.0
+                }
                 val multipartBody = MultipartBody.Part.createFormData(
                     "photo",
                     imageFile.name,
@@ -82,7 +123,9 @@ class AddStoryActivity : AppCompatActivity() {
                     lifecycleScope.launch {
                         viewModel.postStory(
                             multipartBody,
-                            requestBody
+                            requestBody,
+                            lat.toFloat(),
+                            lon.toFloat()
                         ).observe(this@AddStoryActivity) { result ->
                             if (result != null) {
                                 when (result) {
@@ -146,7 +189,41 @@ class AddStoryActivity : AppCompatActivity() {
     private fun showLoading(isLoading: Boolean) {
         binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
+
     private fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun checkPermission(permission: String): Boolean {
+        return ContextCompat.checkSelfPermission(
+            this,
+            permission
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun getMyLocation() {
+        if (checkPermission(Manifest.permission.ACCESS_FINE_LOCATION) &&
+            checkPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
+        ){
+            fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
+                if (location != null) {
+                    lat = location.latitude
+                    lon = location.longitude
+                } else {
+                    Toast.makeText(
+                        this@AddStoryActivity,
+                        "Location is not found. Try Again",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        } else {
+            requestPermissionLauncher.launch(
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                )
+            )
+        }
     }
 }

@@ -12,6 +12,8 @@ import okhttp3.RequestBody
 class AddStoryViewModel(private val repository: StoryRepository): ViewModel() {
     suspend fun postStory(
         file: MultipartBody.Part,
-        description: RequestBody
-    ): LiveData<Result<FileUploadResponse>> = repository.postStory(file, description)
+        description: RequestBody,
+        lat: Float,
+        lon: Float
+    ): LiveData<Result<FileUploadResponse>> = repository.postStory(file, description, lat, lon)
 }

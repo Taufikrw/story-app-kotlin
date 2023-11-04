@@ -39,6 +39,15 @@ interface ApiService {
         @Part("description") description: RequestBody,
     ): FileUploadResponse
 
+    @Multipart
+    @POST("stories")
+    suspend fun uploadImageWithLocation(
+        @Part file: MultipartBody.Part,
+        @Part("description") description: RequestBody,
+        @Part("lat") lat: Float,
+        @Part("lon") lon: Float
+    ): FileUploadResponse
+
     @GET("stories")
     suspend fun getListStory(
         @Query("page") page: Int,
